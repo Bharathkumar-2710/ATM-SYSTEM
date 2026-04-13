@@ -89,17 +89,38 @@ def change_pin():
     return redirect("/dashboard")
 
 # ---------- DELETE ACCOUNT ----------
-@app.route("/delete")
+@app.route("/delete", methods=["GET", "POST"])
 def delete():
     if "user_id" not in session:
         return redirect("/")
 
-    bank.delete_account(session["user_id"])
-    session.clear()
+    user_id = session["user_id"]
 
-    return "✅ Account Deleted Successfully"
+    # GET → show page
+    if request.method == "GET":
+        conn = bank.get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM users WHERE id=?", (user_id,))
+        name = cur.fetchone()[0]
+        conn.close()
 
-# ---------- LOGOUT ----------
+        return render_template("delete_confirm.html", name=name)
+
+    # POST → check PIN and delete
+    pin = request.form["pin"]
+
+    conn = bank.get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT pin FROM users WHERE id=?", (user_id,))
+    real_pin = cur.fetchone()[0]
+    conn.close()
+
+    if pin == real_pin:
+        bank.delete_account(user_id)
+        session.clear()
+        return render_template("delete_success.html")
+    else:
+        return render_template("delete_confirm.html", name="User", error="Wrong PIN")# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
