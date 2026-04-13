@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATM Machine</title>
+
+    <style>
+        body {
+            background: #1a1a1a;
+            font-family: Arial;
+            color: white;
+            text-align: center;
+        }
+
+        .atm-box {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #2c2c2c;
+            border-radius: 15px;
+            box-shadow: 0 0 20px black;
+        }
+
+        h2 {
+            color: #00ffcc;
+        }
+
+        .screen {
+            background: black;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 8px;
+            width: 80%;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #00cc99;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00ffcc;
+        }
+
+        .danger {
+            background: red;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            background: white;
+            color: black;
+            border-radius: 5px;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="atm-box">
+
+    <h2> ATM MACHINE</h2>
+
+    <div class="screen">
+        <h3>Balance: ₹ {{ balance }}</h3>
+    </div>
+
+    <!-- Deposit -->
+    <div class="screen">
+        <h3>Deposit</h3>
+        <form method="post" action="/deposit">
+            <input type="number" name="amount" placeholder="Enter amount" required><br>
+            <button type="submit">Deposit</button>
+        </form>
+    </div>
+
+    <!-- Withdraw -->
+    <div class="screen">
+        <h3>Withdraw</h3>
+        <form method="post" action="/withdraw">
+            <input type="number" name="amount" placeholder="Enter amount" required><br>
+            <button type="submit">Withdraw</button>
+        </form>
+    </div>
+
+    <!-- Change PIN -->
+    <div class="screen">
+        <h3>Change PIN</h3>
+        <form method="post" action="/change_pin">
+            <input type="password" name="pin" placeholder="New PIN" required><br>
+            <button type="submit">Change PIN</button>
+        </form>
+    </div>
+
+    <!-- Mini Statement -->
+    <div class="screen">
+        <h3>Mini Statement</h3>
+
+        <table border="1">
+            <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+
+            {% for t in statement %}
+            <tr>
+                <td>{{ t[0] }}</td>
+                <td>{{ t[1] }}</td>
+                <td>{{ t[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Actions -->
+    <div class="screen">
+        <a href="/delete">
+            <button class="danger">Delete Account</button>
+        </a>
+
+        <a href="/logout">
+            <button>Logout</button>
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>
