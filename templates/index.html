@@ -1,14 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ATM System</title>
+    <title>Smart ATM System</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 120px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #00ffcc;
+        }
+
+        p {
+            font-size: 16px;
+            color: #cccccc;
+        }
+
+        .card {
+            margin: 30px auto;
+            padding: 30px;
+            width: 320px;
+            background: #2c2c2c;
+            border-radius: 15px;
+            box-shadow: 0 0 15px black;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button {
+            width: 220px;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .create {
+            background: #00cc99;
+            color: black;
+        }
+
+        .login {
+            background: #0099ff;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 13px;
+            color: #aaaaaa;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h1> ATM System</h1>
+<div class="container">
 
-<a href="/create">Create Account</a><br><br>
-<a href="/login">Login</a>
+    <h1>Smart ATM System</h1>
+    <p>Secure, fast and simple banking application</p>
+
+    <div class="card">
+
+        <a href="/create">
+            <button class="create">Create Account</button>
+        </a>
+
+        <a href="/login">
+            <button class="login">Login to ATM</button>
+        </a>
+
+    </div>
+
+    <footer>
+        <p>Smart ATM System | Python Flask Project</p>
+    </footer>
+
+</div>
 
 </body>
 </html>
