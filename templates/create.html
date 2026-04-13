@@ -2,23 +2,95 @@
 <html>
 <head>
     <title>Create Account</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 100px;
+        }
+
+        .card {
+            margin: auto;
+            padding: 30px;
+            width: 350px;
+            background: #2c2c2c;
+            border-radius: 15px;
+            box-shadow: 0 0 15px black;
+        }
+
+        h2 {
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 95%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #00cc99;
+            color: black;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .back {
+            margin-top: 15px;
+            display: block;
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: white;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h2>Create Account</h2>
+<div class="container">
 
-<form method="post">
-    Name:<br>
-    <input type="text" name="name" required><br><br>
+    <div class="card">
 
-    PIN:<br>
-    <input type="password" name="pin" required><br><br>
+        <h2>Create Account</h2>
 
-    <button type="submit">Create Account</button>
-</form>
+        <form method="post">
+            <input type="text" name="name" placeholder="Enter your name" required>
 
-<br>
-<a href="/">Back</a>
+            <input type="password" name="pin" placeholder="Enter 4-digit PIN" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <a href="/" class="back">Back to Home</a>
+
+    </div>
+
+</div>
 
 </body>
 </html>
