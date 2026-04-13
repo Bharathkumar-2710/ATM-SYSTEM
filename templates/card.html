@@ -2,17 +2,132 @@
 <html>
 <head>
     <title>Card Details</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 80px;
+        }
+
+        h2 {
+            color: #00ffcc;
+        }
+
+        /* ATM CARD DESIGN */
+        .card-box {
+            width: 350px;
+            height: 200px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3a7bd5, #3a6073);
+            box-shadow: 0 0 20px black;
+            text-align: left;
+            position: relative;
+        }
+
+        .bank-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chip {
+            width: 50px;
+            height: 35px;
+            background: gold;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .card-number {
+            margin-top: 25px;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .card-holder {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 14px;
+        }
+
+        .valid {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+        }
+
+        .btn {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #0099ff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #cccccc;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h2>✅ Account Created Successfully</h2>
+<div class="container">
 
-<p>Your ATM Card Number:</p>
-<h3>{{ card }}</h3>
+    <h2>Account Created Successfully</h2>
 
-<p style="color:red;">⚠️ Save this card number. You need it to login.</p>
+    <!-- ATM CARD -->
+    <div class="card-box">
 
-<a href="/login">Go to Login</a>
+        <div class="bank-name">SMART BANK</div>
+
+        <div class="chip"></div>
+
+        <div class="card-number">
+            {{ card }}
+        </div>
+
+        <div class="card-holder">
+            CARD HOLDER
+        </div>
+
+        <div class="valid">
+            VALID THRU<br>12/30
+        </div>
+
+    </div>
+
+    <p class="note">Save your card number for login</p>
+
+    <div class="btn">
+        <a href="/login">
+            <button>Go to Login</button>
+        </a>
+    </div>
+
+</div>
 
 </body>
 </html>

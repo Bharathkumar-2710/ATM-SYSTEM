@@ -1,24 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>ATM Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 100px;
+        }
+
+        .card {
+            margin: auto;
+            padding: 30px;
+            width: 350px;
+            background: #2c2c2c;
+            border-radius: 15px;
+            box-shadow: 0 0 15px black;
+        }
+
+        h2 {
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 95%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #0099ff;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .back {
+            margin-top: 15px;
+            display: block;
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: white;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin-top: 10px;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h2>ATM Login</h2>
+<div class="container">
 
-<form method="post">
-    Card Number:<br>
-    <input type="text" name="card" required><br><br>
+    <div class="card">
 
-    PIN:<br>
-    <input type="password" name="pin" required><br><br>
+        <h2>ATM Login</h2>
 
-    <button type="submit">Login</button>
-</form>
+        <form method="post">
+            <input type="text" name="card" placeholder="Enter Card Number" required>
 
-<br>
-<a href="/">Back</a>
+            <input type="password" name="pin" placeholder="Enter PIN" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="note">
+            Use your card number and PIN to access your account
+        </div>
+
+        <a href="/" class="back">Back to Home</a>
+
+    </div>
+
+</div>
 
 </body>
 </html>
