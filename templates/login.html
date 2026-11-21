@@ -87,7 +87,7 @@
         <form method="post">
             <input type="text" name="card" placeholder="Enter Card Number" required>
 
-            <input type="password" name="pin" placeholder="Enter PIN" required>
+            <input type="password" name="pin" placeholder="Enter 4-digit PIN" pattern="[0-9]{4}" maxlength="4" required>
 
             <button type="submit">Login</button>
         </form>

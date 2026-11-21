@@ -88,7 +88,7 @@
     <div class="screen">
         <h3>Deposit</h3>
         <form method="post" action="/deposit">
-            <input type="number" name="amount" placeholder="Enter amount" required><br>
+            <input type="number" name="amount" placeholder="Enter amount" min="0.01" step="0.01" required><br>
             <button type="submit">Deposit</button>
         </form>
     </div>
@@ -97,7 +97,7 @@
     <div class="screen">
         <h3>Withdraw</h3>
         <form method="post" action="/withdraw">
-            <input type="number" name="amount" placeholder="Enter amount" required><br>
+            <input type="number" name="amount" placeholder="Enter amount" min="0.01" step="0.01" required><br>
             <button type="submit">Withdraw</button>
         </form>
     </div>
@@ -106,7 +106,7 @@
     <div class="screen">
         <h3>Change PIN</h3>
         <form method="post" action="/change_pin">
-            <input type="password" name="pin" placeholder="New PIN" required><br>
+            <input type="password" name="pin" placeholder="New 4-digit PIN" pattern="[0-9]{4}" maxlength="4" required><br>
             <button type="submit">Change PIN</button>
         </form>
     </div>

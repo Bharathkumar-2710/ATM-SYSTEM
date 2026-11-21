@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask,render_template, request, redirect, session
+
+import math
+import os
 import bank
 
 app = Flask(__name__)
-app.secret_key = "atm_secret"
+app.secret_key = os.environ.get("ATM_SECRET_KEY", "atm_secret")
 
 # Initialize DB
 bank.init_db()
@@ -16,8 +19,13 @@ def home():
 @app.route("/create", methods=["GET", "POST"])
 def create():
     if request.method == "POST":
-        name = request.form["name"]
-        pin = request.form["pin"]
+        name = request.form.get("name", "").strip()
+        pin = request.form.get("pin", "").strip()
+
+        if not name:
+            return render_template("create.html", error="Name is required")
+        if not pin.isdigit() or len(pin) != 4:
+            return render_template("create.html", error="PIN must be exactly 4 digits")
 
         card = bank.create_account(name, pin)
 
@@ -29,8 +37,8 @@ def create():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        card = request.form["card"]
-        pin = request.form["pin"]
+        card = request.form.get("card", "").strip()
+        pin = request.form.get("pin", "").strip()
 
         user = bank.login(card, pin)
 
@@ -48,8 +56,13 @@ def dashboard():
     if "user_id" not in session:
         return redirect("/")
 
-    balance = bank.check_balance(session["user_id"])
-    statement = bank.mini_statement(session["user_id"])
+    user_id = session["user_id"]
+    balance = bank.check_balance(user_id)
+    if balance is None:
+        session.clear()
+        return redirect("/")
+
+    statement = bank.mini_statement(user_id)
 
     return render_template("dashboard.html", balance=balance, statement=statement)
 
@@ -59,7 +72,14 @@ def deposit():
     if "user_id" not in session:
         return redirect("/")
 
-    amount = float(request.form["amount"])
+    try:
+        amount = float(request.form.get("amount", ""))
+    except (TypeError, ValueError):
+        return "❌ Invalid Amount"
+
+    if not math.isfinite(amount) or amount <= 0:
+        return "❌ Invalid Amount"
+
     bank.deposit(session["user_id"], amount)
 
     return redirect("/dashboard")
@@ -70,7 +90,13 @@ def withdraw():
     if "user_id" not in session:
         return redirect("/")
 
-    amount = float(request.form["amount"])
+    try:
+        amount = float(request.form.get("amount", ""))
+    except (TypeError, ValueError):
+        return "❌ Invalid Amount"
+
+    if not math.isfinite(amount) or amount <= 0:
+        return "❌ Invalid Amount"
 
     if not bank.withdraw(session["user_id"], amount):
         return "❌ Insufficient Balance"
@@ -83,7 +109,10 @@ def change_pin():
     if "user_id" not in session:
         return redirect("/")
 
-    new_pin = request.form["pin"]
+    new_pin = request.form.get("pin", "").strip()
+    if not new_pin.isdigit() or len(new_pin) != 4:
+        return "❌ PIN must be exactly 4 digits"
+
     bank.change_pin(session["user_id"], new_pin)
 
     return redirect("/dashboard")
@@ -101,26 +130,42 @@ def delete():
         conn = bank.get_db()
         cur = conn.cursor()
         cur.execute("SELECT name FROM users WHERE id=?", (user_id,))
-        name = cur.fetchone()[0]
+        name_row = cur.fetchone()
         conn.close()
 
-        return render_template("delete_confirm.html", name=name)
+        if name_row is None:
+            session.clear()
+            return redirect("/")
+
+        return render_template("delete_confirm.html", name=name_row[0])
 
     # POST → check PIN and delete
-    pin = request.form["pin"]
+    pin = request.form.get("pin", "").strip()
 
     conn = bank.get_db()
     cur = conn.cursor()
     cur.execute("SELECT pin FROM users WHERE id=?", (user_id,))
-    real_pin = cur.fetchone()[0]
+    pin_row = cur.fetchone()
     conn.close()
 
-    if pin == real_pin:
+    if pin_row is None:
+        session.clear()
+        return redirect("/")
+
+    if pin == pin_row[0]:
         bank.delete_account(user_id)
         session.clear()
         return render_template("delete_success.html")
     else:
-        return render_template("delete_confirm.html", name="User", error="Wrong PIN")# ---------- LOGOUT ----------
+        conn = bank.get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM users WHERE id=?", (user_id,))
+        name_row = cur.fetchone()
+        conn.close()
+        name = name_row[0] if name_row else "User"
+        return render_template("delete_confirm.html", name=name, error="Wrong PIN")
+
+# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
@@ -128,4 +173,8 @@ def logout():
 
 # ---------- RUN ----------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT", "5000")),
+        debug=os.environ.get("FLASK_DEBUG", "0") == "1",
+    )

@@ -1,8 +1,10 @@
 import sqlite3
 from datetime import datetime
 import random
+import os
+import math
 
-DB = "bank.db"
+DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bank.db")
 
 def get_db():
     return sqlite3.connect(DB)
@@ -41,23 +43,35 @@ def generate_card():
 
 # ---------- CREATE ACCOUNT ----------
 def create_account(name, pin):
+    name = str(name).strip()
+    pin = str(pin).strip()
+    if not name:
+        raise ValueError("Name is required")
+    if not pin.isdigit() or len(pin) != 4:
+        raise ValueError("PIN must be exactly 4 digits")
+
     conn = get_db()
     cur = conn.cursor()
 
-    card = generate_card()
-
-    cur.execute("""
-    INSERT INTO users (name, card_number, pin, balance)
-    VALUES (?, ?, ?, ?)
-    """, (name, card, pin, 0))
-
-    conn.commit()
-    conn.close()
-
-    return card   # RETURN CARD NUMBER
+    try:
+        while True:
+            card = generate_card()
+            try:
+                cur.execute("""
+                INSERT INTO users (name, card_number, pin, balance)
+                VALUES (?, ?, ?, ?)
+                """, (name, card, pin, 0))
+                conn.commit()
+                return card
+            except sqlite3.IntegrityError:
+                continue
+    finally:
+        conn.close()
 
 # ---------- LOGIN ----------
 def login(card_number, pin):
+    card_number = str(card_number).strip()
+    pin = str(pin).strip()
     conn = get_db()
     cur = conn.cursor()
 
@@ -74,31 +88,40 @@ def login(card_number, pin):
 # ---------- OTHER FUNCTIONS SAME ----------
 
 def deposit(user_id, amount):
+    amount = float(amount)
+    if not math.isfinite(amount) or amount <= 0:
+        raise ValueError("Amount must be a positive finite number")
+
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("UPDATE users SET balance = balance + ? WHERE id=?",
-                (amount, user_id))
+    cur.execute("UPDATE users SET balance = balance + ? WHERE id=?", (amount, user_id))
+    if cur.rowcount == 0:
+        conn.close()
+        return False
 
     cur.execute("INSERT INTO transactions VALUES (NULL, ?, ?, ?, ?)",
-                (user_id, "Deposit", amount, datetime.now()))
+                (user_id, "Deposit", amount, datetime.now().isoformat()))
 
     conn.commit()
     conn.close()
+    return True
 
 def withdraw(user_id, amount):
+    amount = float(amount)
+    if not math.isfinite(amount) or amount <= 0:
+        raise ValueError("Amount must be a positive finite number")
+
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("SELECT balance FROM users WHERE id=?", (user_id,))
-    balance = cur.fetchone()[0]
-
-    if balance >= amount:
-        cur.execute("UPDATE users SET balance = balance - ? WHERE id=?",
-                    (amount, user_id))
-
+    cur.execute(
+        "UPDATE users SET balance = balance - ? WHERE id=? AND balance >= ?",
+        (amount, user_id, amount),
+    )
+    if cur.rowcount == 1:
         cur.execute("INSERT INTO transactions VALUES (NULL, ?, ?, ?, ?)",
-                    (user_id, "Withdraw", amount, datetime.now()))
+                    (user_id, "Withdraw", amount, datetime.now().isoformat()))
 
         conn.commit()
         conn.close()
@@ -122,12 +145,16 @@ def check_balance(user_id):
     cur = conn.cursor()
 
     cur.execute("SELECT balance FROM users WHERE id=?", (user_id,))
-    balance = cur.fetchone()[0]
+    row = cur.fetchone()
 
     conn.close()
-    return balance
+    return row[0] if row else None
 
 def change_pin(user_id, new_pin):
+    new_pin = str(new_pin).strip()
+    if not new_pin.isdigit() or len(new_pin) != 4:
+        raise ValueError("PIN must be exactly 4 digits")
+
     conn = get_db()
     cur = conn.cursor()
 

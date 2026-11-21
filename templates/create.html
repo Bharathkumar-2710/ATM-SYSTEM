@@ -81,10 +81,14 @@
         <form method="post">
             <input type="text" name="name" placeholder="Enter your name" required>
 
-            <input type="password" name="pin" placeholder="Enter 4-digit PIN" required>
+            <input type="password" name="pin" placeholder="Enter 4-digit PIN" pattern="[0-9]{4}" maxlength="4" required>
 
             <button type="submit">Create Account</button>
         </form>
+
+        {% if error %}
+            <p class="back">{{ error }}</p>
+        {% endif %}
 
         <a href="/" class="back">Back to Home</a>
 
